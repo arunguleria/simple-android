@@ -51,3 +51,9 @@ data class BloodSugarMeasurementFetched(val bloodSugarMeasurement: BloodSugarMea
 object RemoveBloodSugarClicked : BloodSugarEntryEvent() {
   override val analyticsName: String = "Blood Sugar Entry: Remove clicked"
 }
+
+data class UnitChanged(val pref: UnitPreference): BloodSugarEntryEvent()
+
+enum class UnitPreference {
+  Mmol, Mg
+}

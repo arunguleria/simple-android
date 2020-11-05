@@ -4,6 +4,8 @@ import com.spotify.mobius.Next
 import com.spotify.mobius.Update
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import org.simple.clinic.bloodsugar.BloodSugarReading
+import org.simple.clinic.bloodsugar.HbA1c
 import org.simple.clinic.bloodsugar.entry.BloodSugarEntrySheet.ScreenType.BLOOD_SUGAR_ENTRY
 import org.simple.clinic.bloodsugar.entry.BloodSugarEntrySheet.ScreenType.DATE_ENTRY
 import org.simple.clinic.bloodsugar.entry.BloodSugarSaveState.NOT_SAVING_BLOOD_SUGAR
@@ -44,6 +46,7 @@ class BloodSugarEntryUpdate @AssistedInject constructor(
       SaveClicked -> onSaveClicked(model)
       is BloodSugarSaved -> next(model.bloodSugarStateChanged(NOT_SAVING_BLOOD_SUGAR), SetBloodSugarSavedResultAndFinish)
       RemoveBloodSugarClicked -> dispatch(ShowConfirmRemoveBloodSugarDialog((model.openAs as OpenAs.Update).bloodSugarMeasurementUuid))
+      is UnitChanged -> next(model.updateUnitPreference(event.pref), UpdateUnitPreference(event.pref))
     }
   }
 
@@ -69,7 +72,12 @@ class BloodSugarEntryUpdate @AssistedInject constructor(
     return if (model.bloodSugarSaveState == SAVING_BLOOD_SUGAR) {
       Next.noChange()
     } else {
-      val bloodSugarValidationResult = model.bloodSugarReading.validate()
+      val bloodSugarReading = when {
+        model.measurementType is HbA1c -> BloodSugarReading.fromHbA1C(model.bloodSugarReading)
+        model.unitPreference == UnitPreference.Mg -> BloodSugarReading.fromMg(model.bloodSugarReading, model.measurementType)
+        model.unitPreference == UnitPreference.Mmol -> BloodSugarReading.fromMmol(model.bloodSugarReading, model.measurementType)
+      }
+      val bloodSugarValidationResult = bloodSugarReading.validate()
       val dateValidationResult = dateValidator.validate(getDateText(model), dateInUserTimeZone)
       val validationErrorEffects = getValidationErrorEffects(bloodSugarValidationResult, dateValidationResult)
 

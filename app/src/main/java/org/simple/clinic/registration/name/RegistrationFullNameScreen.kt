@@ -20,7 +20,6 @@ import org.simple.clinic.registration.pin.RegistrationPinScreenKey
 import org.simple.clinic.router.screen.ScreenRouter
 import org.simple.clinic.user.OngoingRegistrationEntry
 import org.simple.clinic.util.unsafeLazy
-import org.simple.clinic.widgets.setTextAndCursor
 import javax.inject.Inject
 
 class RegistrationFullNameScreen(
@@ -125,7 +124,7 @@ class RegistrationFullNameScreen(
           .map { RegistrationFullNameDoneClicked() }
 
   override fun preFillUserDetails(ongoingEntry: OngoingRegistrationEntry) {
-    fullNameEditText.setTextAndCursor(ongoingEntry.fullName)
+//    fullNameEditText.setTextAndCursor(ongoingEntry.fullName)
   }
 
   override fun showEmptyNameValidationError() {

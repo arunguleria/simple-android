@@ -275,14 +275,14 @@ class BloodSugarEntrySheet : BottomSheetActivity(), BloodSugarEntryUi, RemoveBlo
     showBloodSugarErrorMessage(getString(R.string.bloodsugarentry_error_empty))
   }
 
-  override fun showBloodSugarHighError(measurementType: BloodSugarMeasurementType) {
+  override fun showBloodSugarHighError(measurementType: BloodSugarMeasurementType, unitPreference: UnitPreference) {
     when (measurementType) {
       Random, PostPrandial, Fasting -> showBloodSugarErrorMessage(getString(R.string.bloodsugarentry_error_higher_limit))
       HbA1c -> showBloodSugarErrorMessage(getString(R.string.bloodsugarentry_error_higher_limit_hba1c))
     }
   }
 
-  override fun showBloodSugarLowError(measurementType: BloodSugarMeasurementType) {
+  override fun showBloodSugarLowError(measurementType: BloodSugarMeasurementType, unitPreference: UnitPreference) {
     when (measurementType) {
       Random, PostPrandial, Fasting -> showBloodSugarErrorMessage(getString(R.string.bloodsugarentry_error_lower_limit))
       HbA1c -> showBloodSugarErrorMessage(getString(R.string.bloodsugarentry_error_lower_limit_hba1c))
