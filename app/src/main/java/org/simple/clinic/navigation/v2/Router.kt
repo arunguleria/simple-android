@@ -42,6 +42,18 @@ class Router(
     executeStateChange(history, Direction.Replace)
   }
 
+  fun push(screenKey: ScreenKey) {
+    val newHistory = history.add(screenKey)
+
+    executeStateChange(newHistory, Direction.Forward)
+  }
+
+  fun pop() {
+    val newHistory = history.withoutLast()
+
+    executeStateChange(newHistory, Direction.Backward)
+  }
+
   private fun executeStateChange(
       newHistory: History,
       direction: Direction
