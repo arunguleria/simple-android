@@ -63,6 +63,7 @@ class Router(
     val currentScreenKeys = history.keys
     val newScreenKeys = newHistory.keys
     val newTop = newScreenKeys.last()
+    val beforeNewTop = if (newScreenKeys.size > 1) newScreenKeys[newScreenKeys.lastIndex - 1] else null
 
     // Remove old fragments if they are no longer present in the new set of screens
     currentScreenKeys.forEach { key ->
@@ -79,21 +80,52 @@ class Router(
 
     newScreenKeys.forEach { key ->
       var fragment = fragmentManager.findFragmentByTag(key.fragmentTag)
-      // TODO (vs) 11/11/20: Add support for modal fragments
       if (key == newTop) {
-        if (fragment != null) {
-          if (fragment.isRemoving) { // fragments are quirky, they die asynchronously. Ignore if they're still there.
-            transaction.replace(containerId, key.createFragment(), key.fragmentTag)
-          } else if (fragment.isDetached) {
-            transaction.attach(fragment)
+        if (key.type == ScreenKey.ScreenType.FullScreen) {
+          if (fragment != null) {
+            if (fragment.isRemoving) { // fragments are quirky, they die asynchronously. Ignore if they're still there.
+              transaction.replace(containerId, key.createFragment(), key.fragmentTag)
+            } else if (fragment.isDetached) {
+              transaction.attach(fragment)
+            }
+          } else {
+            fragment = key.createFragment() // create and add new top if did not exist
+            transaction.add(containerId, fragment, key.fragmentTag)
           }
-        } else {
-          fragment = key.createFragment() // create and add new top if did not exist
-          transaction.add(containerId, fragment, key.fragmentTag)
+        } else if (key.type == ScreenKey.ScreenType.Modal) {
+          if (fragment != null) {
+            if (fragment.isRemoving) { // fragments are quirky, they die asynchronously. Ignore if they're still there.
+              transaction.add(key.createFragment(), key.fragmentTag)
+            } else if (fragment.isDetached) {
+              transaction.attach(fragment)
+            }
+          } else {
+            fragment = key.createFragment() // create and add new top if did not exist
+            transaction.add(fragment, key.fragmentTag)
+          }
         }
       } else {
-        if (fragment != null && fragment.isShowing) {
-          transaction.detach(fragment)
+        if (newTop.type == ScreenKey.ScreenType.FullScreen) {
+          if (fragment != null && fragment.isShowing) {
+            transaction.detach(fragment)
+          }
+        } else if (newTop.type == ScreenKey.ScreenType.Modal) {
+          // Last but one key should not be detached since the topmost key is a modal
+          // and we want the previous screen to be visible
+          if (key != beforeNewTop && fragment != null && fragment.isShowing) {
+            transaction.detach(fragment)
+          } else if (key == beforeNewTop) {
+            if (fragment == null) {
+              fragment = key.createFragment()
+              transaction.replace(containerId, fragment, key.fragmentTag)
+            } else {
+              if (fragment.isNotShowing) {
+                transaction.attach(fragment)
+              } else if (fragment.isRemoving) {
+                transaction.add(key.createFragment(), key.fragmentTag)
+              }
+            }
+          }
         }
       }
     }
