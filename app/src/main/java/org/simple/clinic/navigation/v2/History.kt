@@ -4,4 +4,4 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class History(private val keys: List<ScreenKey>) : Parcelable
+data class History(val keys: List<ScreenKey>) : Parcelable
