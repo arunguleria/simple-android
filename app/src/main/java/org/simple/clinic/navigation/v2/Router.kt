@@ -54,6 +54,35 @@ class Router(
     executeStateChange(newHistory, Direction.Backward)
   }
 
+  fun onBackPressed(): Boolean {
+    val currentTop = history.top()
+    val fragment = fragmentManager.findFragmentByTag(currentTop.fragmentTag)
+
+    require(fragment != null) { "Could not find fragment for [$currentTop]" }
+
+    return if (fragment !is HandlesBack) {
+      if (history.keys.size > 1) {
+        pop()
+        true
+      } else {
+        false
+      }
+    } else {
+      val handled = fragment.onBackPressed()
+
+      if (handled) {
+        true
+      } else {
+        if (history.keys.size > 1) {
+          pop()
+          true
+        } else {
+          false
+        }
+      }
+    }
+  }
+
   private fun executeStateChange(
       newHistory: History,
       direction: Direction

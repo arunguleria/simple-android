@@ -15,4 +15,8 @@ data class History(val keys: List<ScreenKey>) : Parcelable {
 
     return copy(keys = keys.dropLast(1))
   }
+
+  fun top(): ScreenKey {
+    return keys.last()
+  }
 }
