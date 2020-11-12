@@ -54,6 +54,12 @@ class Router(
     executeStateChange(newHistory, Direction.Backward)
   }
 
+  fun popUntil(key: ScreenKey) {
+    val newHistory = history.removeUntil(key)
+    
+    executeStateChange(newHistory, Direction.Backward)
+  }
+
   fun onBackPressed(): Boolean {
     val currentTop = history.top()
     val fragment = fragmentManager.findFragmentByTag(currentTop.fragmentTag)
