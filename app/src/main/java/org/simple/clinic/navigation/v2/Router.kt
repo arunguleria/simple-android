@@ -56,7 +56,7 @@ class Router(
 
   fun popUntil(key: ScreenKey) {
     val newHistory = history.removeUntil(key)
-    
+
     executeStateChange(newHistory, Direction.Backward)
   }
 
@@ -110,6 +110,7 @@ class Router(
     val currentScreenKeys = history.keys
     val newScreenKeys = newHistory.keys
     val newTop = newScreenKeys.last()
+    val currentTop = currentScreenKeys.last()
     val beforeNewTop = if (newScreenKeys.size > 1) newScreenKeys[newScreenKeys.lastIndex - 1] else null
 
     // Remove old fragments if they are no longer present in the new set of screens
@@ -120,7 +121,13 @@ class Router(
         if (!newScreenKeys.contains(key)) {
           transaction.remove(fragment)
         } else if (fragment.isShowing) {
-          transaction.detach(fragment)
+          if (key == newTop) {
+            if (currentTop.type != ScreenKey.ScreenType.Modal) {
+              transaction.detach(fragment)
+            }
+          } else {
+            transaction.detach(fragment)
+          }
         }
       }
     }
@@ -166,10 +173,10 @@ class Router(
               fragment = key.createFragment()
               transaction.replace(containerId, fragment, key.fragmentTag)
             } else {
-              if (fragment.isNotShowing) {
-                transaction.attach(fragment)
-              } else if (fragment.isRemoving) {
+              if (fragment.isRemoving) {
                 transaction.add(key.createFragment(), key.fragmentTag)
+              } else {
+                transaction.attach(fragment)
               }
             }
           }
