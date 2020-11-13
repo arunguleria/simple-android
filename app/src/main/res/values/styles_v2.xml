@@ -726,4 +726,13 @@
     <item name="android:letterSpacing">0.0892857143</item>
     <item name="android:textColor">?attr/colorOnError</item>
   </style>
+
+  <style name="Clinic.V2.Theme.BottomSheetFragment" parent="Theme.Design.Light.BottomSheetDialog">
+    <item name="colorPrimary">@color/color_primary</item>
+    <item name="colorPrimaryDark">@color/color_primary_dark</item>
+    <item name="colorAccent">@color/color_accent</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:windowSoftInputMode">adjustResize</item>
+  </style>
 </resources>
