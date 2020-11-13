@@ -4,29 +4,29 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class History(val keys: List<ScreenKey>) : Parcelable {
+data class History(val requests: List<NavRequest>) : Parcelable {
 
   init {
-    if (keys.isEmpty()) throw IllegalStateException("Require at least 1 key!")
+    if (requests.isEmpty()) throw IllegalStateException("Require at least 1 key!")
   }
 
-  fun add(screenKey: ScreenKey): History {
-    return copy(keys = keys + screenKey)
+  fun add(request: NavRequest): History {
+    return copy(requests = requests + request)
   }
 
   fun withoutLast(): History {
-    require(keys.size > 1) { "Cannot remove last when there is only one key left" }
+    require(requests.size > 1) { "Cannot remove last when there is only one key left" }
 
-    return copy(keys = keys.dropLast(1))
+    return copy(requests = requests.dropLast(1))
   }
 
   fun removeUntil(key: ScreenKey): History {
-    val newKeys = keys.dropLastWhile { it != key }
+    val newRequests = requests.dropLastWhile { it.key != key }
 
-    return copy(keys = newKeys)
+    return copy(requests = newRequests)
   }
 
-  fun top(): ScreenKey {
-    return keys.last()
+  fun top(): NavRequest {
+    return requests.last()
   }
 }
