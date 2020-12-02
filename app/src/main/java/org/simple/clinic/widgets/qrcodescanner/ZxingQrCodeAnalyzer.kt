@@ -13,6 +13,7 @@ import com.google.zxing.MultiFormatReader
 import com.google.zxing.NotFoundException
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import timber.log.Timber
 import java.nio.ByteBuffer
 
 private fun ByteBuffer.toByteArray(): ByteArray {
@@ -22,7 +23,7 @@ private fun ByteBuffer.toByteArray(): ByteArray {
   return data
 }
 
-private typealias OnQrCodeDetected = (String) -> Unit
+typealias OnQrCodeDetected = (String) -> Unit
 
 class ZxingQrCodeAnalyzer(
     private val onQrCodeDetected: OnQrCodeDetected

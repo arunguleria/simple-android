@@ -65,7 +65,7 @@ constructor(
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
         .also {
-          it.setAnalyzer(cameraExecutor, ZxingQrCodeAnalyzer(scans::onNext))
+          it.setAnalyzer(cameraExecutor, MlKitQrCodeAnalyzer(scans::onNext))
         }
 
     cameraProvider.unbindAll()
