@@ -88,16 +88,19 @@ class FakeDataGenerationReceiver : BroadcastReceiver() {
       val currentFacility = facilityRepository.currentFacilityImmediate()!!
       val otherFacility = anyFacilityExceptCurrent(currentFacility)
 
-      val records = generateRecords(recordsToGenerate, currentFacility, otherFacility, currentUser)
+      generateRecords(recordsToGenerate, currentFacility, otherFacility, currentUser)
+          .asSequence()
+          .chunked(500)
+          .forEach { records ->
+            val patients = records.map { it.patientProfile }
+            val bps = records.map { it.bloodPressureMeasurements }.flatten()
+            val appointments = records.map { it.appointment }
 
-      val patients = records.map { it.patientProfile }
-      val bps = records.map { it.bloodPressureMeasurements }.flatten()
-      val appointments = records.map { it.appointment }
-
-      patientRepository.save(patients)
-          .andThen(bloodPressureRepository.save(bps))
-          .andThen(appointmentRepository.save(appointments))
-          .blockingAwait()
+            patientRepository.save(patients)
+                .andThen(bloodPressureRepository.save(bps))
+                .andThen(appointmentRepository.save(appointments))
+                .blockingAwait()
+          }
     }
   }
 
