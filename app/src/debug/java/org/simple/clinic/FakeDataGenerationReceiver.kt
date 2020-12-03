@@ -212,7 +212,7 @@ class FakeDataGenerationReceiver : BroadcastReceiver() {
     return Patient(
         uuid = uuidGenerator.v4(),
         addressUuid = address.uuid,
-        fullName = faker.name.name(),
+        fullName = "Anish Acharya",
         gender = randomGender(),
         dateOfBirth = LocalDate.now(clock).minusYears(Random.nextInt(30..70).toLong()),
         age = null,
